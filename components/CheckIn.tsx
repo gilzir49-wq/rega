@@ -39,7 +39,7 @@ export default function CheckIn({
     );
 
   return (
-    <div className="mx-auto w-full max-w-md animate-fade-up px-5 pb-32 pt-10">
+    <div className="mx-auto w-full max-w-md animate-fade-up px-5 pb-40 pt-10">
       <h1 className="text-center text-2xl font-semibold text-ink">{title}</h1>
       <p className="mt-2 text-center text-[15px] leading-relaxed text-muted">
         {subtitle}
@@ -118,7 +118,10 @@ export default function CheckIn({
       </div>
 
       {/* Submit (sticky-ish at bottom of flow) */}
-      <div className="fixed inset-x-0 bottom-0 z-10 bg-gradient-to-t from-bg via-bg to-transparent px-5 pb-7 pt-5">
+      <div
+        className="fixed inset-x-0 bottom-0 z-10 bg-gradient-to-t from-bg via-bg to-transparent px-5 pt-5"
+        style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}
+      >
         <button
           disabled={score === null}
           onClick={() =>

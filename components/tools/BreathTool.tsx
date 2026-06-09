@@ -113,62 +113,61 @@ export default function BreathTool({ onDone }: { onDone: () => void }) {
         })}
       </div>
 
-      {/* The breathing circle */}
-      <div className="relative mt-8 flex flex-1 flex-col items-center justify-center">
-        <div className="relative grid h-64 w-64 place-items-center">
+      {/* The breathing circle — tap it to start / pause (no separate button to
+          collide with the footer on short screens). */}
+      <div className="relative mt-6 flex flex-1 flex-col items-center justify-center">
+        <button
+          onClick={running ? stop : start}
+          aria-label={running ? 'עצרו' : 'התחילו'}
+          className="relative grid h-56 w-56 place-items-center"
+        >
           {/* soft outer halos */}
-          <div
-            className="absolute h-64 w-64 rounded-full bg-sage/15"
+          <span
+            className="absolute h-56 w-56 rounded-full bg-sage/15"
             style={{
               transform: `scale(${scale})`,
               transition: `transform ${dur}s ease-in-out`,
             }}
           />
-          <div
-            className="absolute h-48 w-48 rounded-full bg-sage/25"
+          <span
+            className="absolute h-44 w-44 rounded-full bg-sage/25"
             style={{
               transform: `scale(${scale})`,
               transition: `transform ${dur}s ease-in-out`,
             }}
           />
-          <div
-            className="grid h-36 w-36 place-items-center rounded-full bg-sage text-white shadow-glow"
+          <span
+            className="grid h-32 w-32 place-items-center rounded-full bg-sage text-center text-white shadow-glow"
             style={{
               transform: `scale(${scale})`,
               transition: `transform ${dur}s ease-in-out`,
             }}
           >
-            <span className="text-lg font-medium">
-              {running ? PHASE_LABEL[phase] : 'מוכנים?'}
+            <span className="px-2 text-base font-medium leading-tight">
+              {running ? (
+                PHASE_LABEL[phase]
+              ) : (
+                <>
+                  הקישו
+                  <br />
+                  כדי להתחיל
+                </>
+              )}
             </span>
-          </div>
-        </div>
+          </span>
+        </button>
 
-        {running && cycles > 0 && (
-          <p className="mt-6 text-sm text-muted">{cycles} נשימות שלמות</p>
-        )}
-
-        <p className="mt-5 max-w-xs text-center text-[12.5px] leading-relaxed text-muted/90">
-          {BREATH_SAFETY}
+        <p className="mt-5 h-5 text-sm text-muted">
+          {running
+            ? cycles > 0
+              ? `${cycles} נשימות שלמות · הקישו כדי לעצור`
+              : 'הקישו על העיגול כדי לעצור'
+            : ''}
         </p>
 
-        <div className="mt-6">
-          {!running ? (
-            <button
-              onClick={start}
-              className="press rounded-full bg-surface px-8 py-3 font-medium text-sage-deep shadow-card hairline"
-            >
-              התחילו
-            </button>
-          ) : (
-            <button
-              onClick={stop}
-              className="press rounded-full bg-surface px-8 py-3 font-medium text-muted shadow-card hairline"
-            >
-              עצרו
-            </button>
-          )}
-        </div>
+        <p className="mt-3 max-w-xs text-center text-[12.5px] leading-relaxed text-muted/90">
+          {BREATH_SAFETY}
+        </p>
       </div>
     </ToolFrame>
   );
