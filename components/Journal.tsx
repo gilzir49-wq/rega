@@ -30,7 +30,8 @@ function Trend({ sessions }: { sessions: Session[] }) {
   const pad = 10;
   const stepX = (w - pad * 2) / (points.length - 1);
   const y = (v: number) => h - pad - ((v - 1) / 4) * (h - pad * 2);
-  const coords = points.map((v, i) => [pad + i * stepX, y(v)] as const);
+  // RTL time axis: oldest on the right, newest on the left.
+  const coords = points.map((v, i) => [w - pad - i * stepX, y(v)] as const);
   const path = coords
     .map(([x, yy], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)} ${yy.toFixed(1)}`)
     .join(' ');
@@ -55,10 +56,9 @@ function Trend({ sessions }: { sessions: Session[] }) {
           <circle key={i} cx={x} cy={yy} r="2.6" fill="var(--sage)" />
         ))}
       </svg>
-      <div className="mt-1 flex justify-between text-[11px] text-muted">
-        <span>סוער</span>
-        <span>שקט</span>
-      </div>
+      <p className="mt-2 text-center text-[11.5px] text-muted">
+        ככל שהקו גבוה יותר — הרגשתם רגועים יותר. מימין להתחלה, משמאל להיום.
+      </p>
     </div>
   );
 }

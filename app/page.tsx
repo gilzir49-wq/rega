@@ -11,7 +11,15 @@ import ThemeToggle from '@/components/ThemeToggle';
 import CheckIn from '@/components/CheckIn';
 import ToolPicker from '@/components/ToolPicker';
 import Journal from '@/components/Journal';
-import { JournalIcon, BackIcon, ShareIcon, CheckIcon } from '@/components/Icons';
+import Resources from '@/components/Resources';
+import {
+  JournalIcon,
+  BackIcon,
+  ShareIcon,
+  CheckIcon,
+  GroundingIcon,
+  BreathIcon,
+} from '@/components/Icons';
 
 import BreathTool from '@/components/tools/BreathTool';
 import BodyScan from '@/components/tools/BodyScan';
@@ -28,6 +36,7 @@ export default function Home() {
   const [tool, setTool] = useState<ToolId | null>(null);
   const [after, setAfter] = useState<CheckInData | null>(null);
   const [writing, setWriting] = useState<string | undefined>(undefined);
+  const [quickTool, setQuickTool] = useState<ToolId | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
   const reset = () => {
@@ -35,6 +44,12 @@ export default function Home() {
     setTool(null);
     setAfter(null);
     setWriting(undefined);
+    setQuickTool(null);
+  };
+
+  const flash = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2600);
   };
 
   const goHome = () => {
@@ -57,27 +72,48 @@ export default function Home() {
     setScreen('after');
   };
 
-  const onAfter = (data: CheckInData) => {
-    setAfter(data);
+  const persist = (afterData?: CheckInData) => {
     if (before && tool) {
       const session: Session = {
         id: newId(),
         date: Date.now(),
         tool,
         before,
-        after: data,
+        after: afterData,
         writing,
       };
       saveSession(session);
     }
+  };
+
+  const onAfter = (data: CheckInData) => {
+    setAfter(data);
+    persist(data);
     setScreen('done');
+  };
+
+  const onAfterSkip = () => {
+    setAfter(null);
+    persist(undefined);
+    setScreen('done');
+  };
+
+  // Quick-calm: straight into a single soothing tool, no check-in, not judged.
+  const startQuick = (id: ToolId) => {
+    setQuickTool(id);
+    setScreen('quicktool');
+  };
+  const endQuick = () => {
+    reset();
+    setScreen('welcome');
+    flash('שמרתם על עצמכם לרגע. אתם כאן 🌿');
   };
 
   const doShare = async () => {
     const res = await shareApp();
-    if (res === 'copied') setToast('הקישור הועתק 🌿');
-    else if (res === 'shared') setToast('תודה ששיתפתם');
-    if (res !== 'shared') setTimeout(() => setToast(null), 2200);
+    if (res === 'copied') flash('הקישור הועתק 🌿');
+    else if (res === 'shared') flash('תודה ששיתפתם');
+    else if (res === 'failed') flash('לא הצלחנו לשתף — אפשר להעתיק את הקישור ידנית');
   };
 
   const inFlow = screen !== 'welcome';
@@ -117,8 +153,23 @@ export default function Home() {
 
       {/* Screens */}
       {screen === 'welcome' && (
-        <Welcome onStart={() => setScreen('before')} onShare={doShare} />
+        <Welcome
+          onStart={() => setScreen('before')}
+          onQuickCalm={() => setScreen('calm')}
+          onResources={() => setScreen('resources')}
+          onShare={doShare}
+        />
       )}
+
+      {screen === 'calm' && (
+        <QuickCalm onPick={startQuick} onResources={() => setScreen('resources')} />
+      )}
+
+      {screen === 'quicktool' && quickTool && (
+        <ToolView id={quickTool} onDone={endQuick} />
+      )}
+
+      {screen === 'resources' && <Resources />}
 
       {screen === 'before' && (
         <CheckIn
@@ -143,10 +194,12 @@ export default function Home() {
           subtitle="אותה בדיקה עדינה, אחרי שעצרתם לרגע."
           submitLabel="סיימתי"
           onSubmit={onAfter}
+          onSkip={onAfterSkip}
+          skipLabel="אעדיף לא לבדוק עכשיו"
         />
       )}
 
-      {screen === 'done' && before && after && (
+      {screen === 'done' && before && (
         <Done
           before={before}
           after={after}
@@ -174,9 +227,13 @@ export default function Home() {
 // ---- Welcome ----
 function Welcome({
   onStart,
+  onQuickCalm,
+  onResources,
   onShare,
 }: {
   onStart: () => void;
+  onQuickCalm: () => void;
+  onResources: () => void;
   onShare: () => void;
 }) {
   return (
@@ -204,8 +261,15 @@ function Welcome({
         </button>
 
         <button
+          onClick={onQuickCalm}
+          className="press mt-3 w-full rounded-full bg-surface py-3.5 font-medium text-sage-deep shadow-card hairline"
+        >
+          אני צריך/ה להירגע עכשיו
+        </button>
+
+        <button
           onClick={onShare}
-          className="press mx-auto mt-4 flex items-center gap-2 rounded-full px-4 py-2 text-sm text-muted"
+          className="press mx-auto mt-5 flex items-center gap-2 rounded-full px-4 py-2 text-sm text-muted"
         >
           <ShareIcon className="h-4 w-4" />
           שִתפו את רגע עם מי שצריך
@@ -216,13 +280,73 @@ function Welcome({
       <div className="mt-12 max-w-sm">
         <p className="text-[12.5px] leading-relaxed text-muted/90">
           רגע נועד לתמוך ולהרגיע, והוא לא מחליף ליווי מקצועי. אם קשה לך מאוד,
-          מותר ונכון לפנות לעזרה — ב<span className="font-medium text-muted">ער״ן</span>,
-          עזרה ראשונה נפשית, בטלפון{' '}
-          <a href="tel:1201" className="font-medium text-sage-deep underline-offset-2 hover:underline">
-            1201
-          </a>{' '}
-          (בחינם, 24/7).
+          מותר ונכון לפנות לעזרה — אתם לא לבד.
         </p>
+        <button
+          onClick={onResources}
+          className="press mt-2 text-[13px] font-medium text-sage-deep underline-offset-2 hover:underline"
+        >
+          עוד דרכים לעזרה ותמיכה →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ---- Quick-calm chooser (acute distress, zero friction) ----
+function QuickCalm({
+  onPick,
+  onResources,
+}: {
+  onPick: (id: ToolId) => void;
+  onResources: () => void;
+}) {
+  return (
+    <div className="mx-auto flex min-h-[78vh] w-full max-w-md flex-col justify-center px-6">
+      <div className="animate-fade-up text-center">
+        <h1 className="text-2xl font-semibold text-ink">בואו נירגע יחד</h1>
+        <p className="mx-auto mt-3 max-w-xs text-[15px] leading-relaxed text-muted">
+          בלי שאלות, בלי מילוי. בחרו אחד, ופשוט נתחיל. אפשר לעצור בכל רגע.
+        </p>
+
+        <div className="mt-8 space-y-3">
+          <button
+            onClick={() => onPick('breath')}
+            className="press card flex w-full items-center gap-4 p-5 text-right"
+          >
+            <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-sage-soft text-sage-deep">
+              <BreathIcon className="h-7 w-7" />
+            </span>
+            <span>
+              <span className="block font-semibold text-ink">נשימה מודעת</span>
+              <span className="mt-0.5 block text-[14px] text-muted">
+                לנשום יחד עם עיגול רך, להאט את הגוף.
+              </span>
+            </span>
+          </button>
+
+          <button
+            onClick={() => onPick('grounding')}
+            className="press card flex w-full items-center gap-4 p-5 text-right"
+          >
+            <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-sage-soft text-sage-deep">
+              <GroundingIcon className="h-7 w-7" />
+            </span>
+            <span>
+              <span className="block font-semibold text-ink">עיגון בהווה</span>
+              <span className="mt-0.5 block text-[14px] text-muted">
+                לחזור אל החושים, אל המקום הבטוח שכאן ועכשיו.
+              </span>
+            </span>
+          </button>
+        </div>
+
+        <button
+          onClick={onResources}
+          className="press mt-7 text-[13px] font-medium text-sage-deep underline-offset-2 hover:underline"
+        >
+          אני צריך/ה לדבר עם מישהו →
+        </button>
       </div>
     </div>
   );
@@ -285,13 +409,16 @@ function Done({
   onHome,
 }: {
   before: CheckInData;
-  after: CheckInData;
+  after: CheckInData | null;
   onJournal: () => void;
   onAgain: () => void;
   onHome: () => void;
 }) {
   let message: string;
-  if (after.score > before.score) {
+  if (!after) {
+    message =
+      'עצרתם רגע בשביל עצמכם — וזה מה שחשוב. לא חייבים למדוד כלום. אתם כאן, ואתם לא לבד.';
+  } else if (after.score > before.score) {
     message = `לפני הרגשתם ”${MOOD_LABELS[before.score]}“, ועכשיו ”${MOOD_LABELS[after.score]}“. כל צעד קטן נחשב — ועצרתם בשבילו.`;
   } else if (after.score === before.score) {
     message =

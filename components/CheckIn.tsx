@@ -12,12 +12,16 @@ export default function CheckIn({
   submitLabel,
   initial,
   onSubmit,
+  onSkip,
+  skipLabel,
 }: {
   title: string;
   subtitle: string;
   submitLabel: string;
   initial?: CheckInData;
   onSubmit: (data: CheckInData) => void;
+  onSkip?: () => void;
+  skipLabel?: string;
 }) {
   const [score, setScore] = useState<MoodScore | null>(initial?.score ?? null);
   const [tags, setTags] = useState<EmotionTag[]>(initial?.tags ?? []);
@@ -107,6 +111,14 @@ export default function CheckIn({
         >
           {submitLabel}
         </button>
+        {onSkip && (
+          <button
+            onClick={onSkip}
+            className="press mx-auto mt-2 block py-1 text-sm text-muted"
+          >
+            {skipLabel ?? 'לא עכשיו'}
+          </button>
+        )}
       </div>
     </div>
   );

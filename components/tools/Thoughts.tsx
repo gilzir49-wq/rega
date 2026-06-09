@@ -16,7 +16,7 @@ export default function Thoughts({ onDone }: { onDone: () => void }) {
         title="התבוננות במחשבות"
         subtitle="נלמד לראות מחשבה בלי להיאחז בה. בחרו דימוי שמדבר אליכם."
         onDone={onDone}
-        doneLabel="אולי בפעם אחרת"
+        doneLabel="אפשר לדלג כעת"
       >
         <div className="flex flex-1 flex-col justify-center gap-4">
           {THOUGHTS_MODES.map((m) => (
@@ -50,7 +50,7 @@ export default function Thoughts({ onDone }: { onDone: () => void }) {
   return (
     <ToolFrame
       title={mode.name}
-      subtitle="אין צורך לעצור את המחשבות — רק להתבונן בהן חולפות."
+      subtitle="אין צורך לעצור את המחשבות — רק להתבונן בהן חולפות. ואם מחשבה טעונה מדי — פִּקחו עיניים, הביטו סביב, ונשמו. אתם כאן, עכשיו."
       onDone={onDone}
     >
       <StepFlow

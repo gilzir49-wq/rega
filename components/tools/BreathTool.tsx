@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { BREATH_PATTERNS, BreathPattern } from '@/lib/guidance';
+import { BREATH_PATTERNS, BREATH_SAFETY, BreathPattern } from '@/lib/guidance';
 import ToolFrame from './ToolFrame';
 
 type Phase = 'inhale' | 'hold' | 'exhale' | 'holdAfter';
@@ -147,6 +147,10 @@ export default function BreathTool({ onDone }: { onDone: () => void }) {
         {running && cycles > 0 && (
           <p className="mt-6 text-sm text-muted">{cycles} נשימות שלמות</p>
         )}
+
+        <p className="mt-5 max-w-xs text-center text-[12.5px] leading-relaxed text-muted/90">
+          {BREATH_SAFETY}
+        </p>
 
         <div className="mt-6">
           {!running ? (

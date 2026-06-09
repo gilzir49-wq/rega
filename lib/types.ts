@@ -49,4 +49,7 @@ export type Screen =
   | 'tool'
   | 'after'
   | 'done'
-  | 'journal';
+  | 'journal'
+  | 'resources'
+  | 'calm' // quick-calm chooser (acute distress, no check-in)
+  | 'quicktool'; // a single tool run straight, not journaled

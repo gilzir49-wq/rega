@@ -37,7 +37,6 @@ export default function CardTool({
     setTick((t) => t + 1);
   };
 
-  const ring = accent === 'clay' ? 'before:bg-clay/15' : 'before:bg-sage/15';
   const bar = accent === 'clay' ? 'bg-clay' : 'bg-sage';
 
   return (
@@ -45,7 +44,7 @@ export default function CardTool({
       <div className="flex flex-1 flex-col items-center justify-center">
         <div
           key={tick}
-          className={`relative w-full animate-fade-up overflow-hidden rounded-[2rem] bg-surface p-8 shadow-soft hairline before:absolute before:inset-x-0 before:top-0 before:h-1.5 before:content-[''] ${ring}`}
+          className="relative w-full animate-fade-up overflow-hidden rounded-[2rem] bg-surface p-8 shadow-soft hairline"
         >
           <div className={`absolute inset-x-0 top-0 h-1.5 ${bar}`} />
           <p className="text-center text-[20px] leading-loose text-ink">

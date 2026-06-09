@@ -9,7 +9,7 @@ export default function MettaTool({ onDone }: { onDone: () => void }) {
   return (
     <ToolFrame
       title="חמלה ואהבה"
-      subtitle="משאלות טוב, במעגלים מתרחבים. אמרו כל שורה לאט בלב, ושימו לב איך זה מרגיש."
+      subtitle="משאלות טוב, במעגלים מתרחבים. אמרו כל שורה לאט בלב. ואם דווקא עולים כאן כאב או התנגדות — זה אנושי ושכיח לגמרי; אפשר להניח יד על הלב ולהמשיך ברכּוּת."
       onDone={onDone}
     >
       <StepFlow

@@ -2,7 +2,7 @@
 // Network-first for navigations (returning users always get the latest deploy
 // when online; fall back to the cached shell when offline). Hashed static assets
 // use stale-while-revalidate. Bump CACHE on any asset/strategy change.
-const CACHE = 'rega-v1';
+const CACHE = 'rega-v2';
 const SHELL = [
   './',
   './index.html',

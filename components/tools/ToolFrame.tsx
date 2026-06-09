@@ -40,6 +40,9 @@ export default function ToolFrame({
           <CheckIcon className="h-5 w-5" />
           {doneLabel}
         </button>
+        <p className="mt-2.5 text-center text-[12px] text-muted/80">
+          אפשר לעצור בכל רגע — אין כאן כישלון.
+        </p>
       </div>
     </div>
   );
