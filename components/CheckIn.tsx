@@ -2,7 +2,13 @@
 
 import { useState } from 'react';
 import { CheckIn as CheckInData, EmotionTag, MoodScore } from '@/lib/types';
-import { EMOTIONS, MOOD_LABELS, MOOD_SCORES } from '@/lib/content';
+import {
+  EMOTION_GROUPS,
+  EMOTION_LABEL,
+  LIGHT_EMOTIONS,
+  MOOD_LABELS,
+  MOOD_SCORES,
+} from '@/lib/content';
 import MoodFace from './MoodFace';
 
 // The emotional check-in used both before (step 1) and after (step 3).
@@ -63,27 +69,41 @@ export default function CheckIn({
         })}
       </div>
 
-      {/* Emotion tags */}
-      <p className="mt-9 mb-3 text-center text-sm font-medium text-muted">
+      {/* Emotion tags, in gentle clusters */}
+      <p className="mt-9 mb-4 text-center text-sm font-medium text-muted">
         מה נוכח כרגע? (אפשר לבחור כמה, או לדלג)
       </p>
-      <div className="flex flex-wrap justify-center gap-2">
-        {EMOTIONS.map((e) => {
-          const active = tags.includes(e.id);
-          return (
-            <button
-              key={e.id}
-              onClick={() => toggleTag(e.id)}
-              className={`press rounded-full px-4 py-2 text-sm ${
-                active
-                  ? 'bg-sage-deep text-white shadow-card'
-                  : 'bg-surface text-ink hairline'
-              }`}
-            >
-              {e.label}
-            </button>
-          );
-        })}
+      <div className="space-y-3">
+        {EMOTION_GROUPS.map((group, gi) => (
+          <div key={gi}>
+            {group.hint && (
+              <p className="mb-2.5 mt-1 text-center text-[13px] text-muted/80">
+                {group.hint}
+              </p>
+            )}
+            <div className="flex flex-wrap justify-center gap-2">
+              {group.ids.map((id) => {
+                const active = tags.includes(id);
+                const light = LIGHT_EMOTIONS.includes(id);
+                return (
+                  <button
+                    key={id}
+                    onClick={() => toggleTag(id)}
+                    className={`press rounded-full px-4 py-2 text-sm ${
+                      active
+                        ? light
+                          ? 'bg-clay text-white shadow-card'
+                          : 'bg-sage-deep text-white shadow-card'
+                        : 'bg-surface text-ink hairline'
+                    }`}
+                  >
+                    {EMOTION_LABEL[id]}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Optional free text */}

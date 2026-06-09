@@ -5,14 +5,32 @@
 export type MoodScore = 1 | 2 | 3 | 4 | 5;
 
 export type EmotionTag =
+  // activating / difficult
   | 'anxiety'
   | 'fear'
-  | 'loneliness'
+  | 'anger'
+  | 'frustration'
+  | 'irritable'
+  | 'overwhelm'
   | 'restless'
+  | 'onedge'
+  // heavy / down
   | 'sadness'
+  | 'loneliness'
   | 'emptiness'
+  | 'guilt'
+  | 'shame'
+  | 'despair'
+  | 'numb'
+  | 'tired'
+  | 'confusion'
   | 'future'
-  | 'overwhelm';
+  // lighter
+  | 'calm'
+  | 'relief'
+  | 'hope'
+  | 'gratitude'
+  | 'joy';
 
 export type ToolId =
   | 'breath'
