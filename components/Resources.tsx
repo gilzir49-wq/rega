@@ -4,35 +4,7 @@
 // on a national/security background (soldiers, reservists, terror & war). Always
 // gentle, never alarming — just quietly here if it's needed.
 
-interface Resource {
-  name: string;
-  who: string;
-  phone?: string;
-  phoneLabel?: string;
-  site?: string;
-}
-
-const RESOURCES: Resource[] = [
-  {
-    name: 'נט״ל',
-    who: 'תמיכה בנפגעי טראומה על רקע לאומי וביטחוני — חיילים, מילואימניקים ומשפחות. שיחה חינמית וחסויה.',
-    phone: '1800363363',
-    phoneLabel: '1-800-363-363',
-    site: 'https://www.natal.org.il',
-  },
-  {
-    name: 'ער״ן',
-    who: 'עזרה ראשונה נפשית, בכל שעה, לכל אדם. אנונימי וחינמי, 24/7.',
-    phone: '1201',
-    phoneLabel: '1201',
-    site: 'https://www.eran.org.il',
-  },
-  {
-    name: 'סה״ר',
-    who: 'סיוע והקשבה ברשת — אם נוח לכם יותר בכתב מאשר בטלפון.',
-    site: 'https://sahar.org.il',
-  },
-];
+import { SUPPORT_LINES, EMERGENCY } from '@/lib/support';
 
 export default function Resources() {
   return (
@@ -46,7 +18,7 @@ export default function Resources() {
       </p>
 
       <div className="mt-7 space-y-3">
-        {RESOURCES.map((r) => (
+        {SUPPORT_LINES.map((r) => (
           <div key={r.name} className="card p-5">
             <p className="text-lg font-semibold text-ink">{r.name}</p>
             <p className="mt-1 text-[14px] leading-relaxed text-muted">
@@ -78,12 +50,12 @@ export default function Resources() {
 
       <p className="mx-auto mt-7 max-w-sm rounded-2xl bg-surface-2 p-4 text-center text-[13.5px] leading-relaxed text-muted">
         אם יש סכנה מיידית לכם או למישהו אחר — חייגו{' '}
-        <a href="tel:101" className="font-semibold text-clay">
-          101
+        <a href={`tel:${EMERGENCY.mda}`} className="font-semibold text-clay">
+          {EMERGENCY.mda}
         </a>{' '}
         (מד״א) או{' '}
-        <a href="tel:100" className="font-semibold text-clay">
-          100
+        <a href={`tel:${EMERGENCY.police}`} className="font-semibold text-clay">
+          {EMERGENCY.police}
         </a>{' '}
         (משטרה).
       </p>

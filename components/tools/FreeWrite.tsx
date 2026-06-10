@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ToolFrame from './ToolFrame';
+import SafetyNote from '../SafetyNote';
+import { detectDistress } from '@/lib/safety';
 
 // A quiet blank page. Whatever is written is handed back to be saved in the
 // journal alongside the session.
@@ -11,6 +13,11 @@ export default function FreeWrite({
   onDone: (writing?: string) => void;
 }) {
   const [text, setText] = useState('');
+  const [distress, setDistress] = useState(false);
+  const [safetyDismissed, setSafetyDismissed] = useState(false);
+  useEffect(() => {
+    if (!distress && detectDistress(text)) setDistress(true);
+  }, [text, distress]);
 
   return (
     <ToolFrame
@@ -26,6 +33,9 @@ export default function FreeWrite({
           placeholder="מה עובר עליכם עכשיו?…"
           className="min-h-[40vh] flex-1 resize-none rounded-3xl bg-surface p-6 text-[17px] leading-relaxed text-ink placeholder:text-muted/60 hairline focus:outline-none focus:ring-2 focus:ring-sage/40"
         />
+        {distress && !safetyDismissed && (
+          <SafetyNote onDismiss={() => setSafetyDismissed(true)} />
+        )}
         <p className="mt-3 text-center text-[13px] text-muted">
           מה שתכתבו יישמר ביומן האישי שלכם, רק במכשיר הזה.
         </p>

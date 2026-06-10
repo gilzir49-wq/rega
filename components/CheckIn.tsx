@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CheckIn as CheckInData, EmotionTag, MoodScore } from '@/lib/types';
+import { detectDistress } from '@/lib/safety';
+import SafetyNote from './SafetyNote';
 import {
   EMOTION_GROUPS,
   EMOTION_LABEL,
@@ -32,6 +34,14 @@ export default function CheckIn({
   const [score, setScore] = useState<MoodScore | null>(initial?.score ?? null);
   const [tags, setTags] = useState<EmotionTag[]>(initial?.tags ?? []);
   const [note, setNote] = useState(initial?.note ?? '');
+
+  // On-device safety net: once distress is noticed, keep the support card until
+  // the person dismisses it (don't yank it away if they edit the text).
+  const [distress, setDistress] = useState(false);
+  const [safetyDismissed, setSafetyDismissed] = useState(false);
+  useEffect(() => {
+    if (!distress && detectDistress(note)) setDistress(true);
+  }, [note, distress]);
 
   const toggleTag = (t: EmotionTag) =>
     setTags((cur) =>
@@ -115,6 +125,9 @@ export default function CheckIn({
           placeholder="ואם בא לכם — כמה מילים על מה שעובר עליכם (לא חובה)"
           className="w-full resize-none rounded-2xl bg-surface p-4 text-[15px] text-ink placeholder:text-muted/70 hairline focus:outline-none focus:ring-2 focus:ring-sage/40"
         />
+        {distress && !safetyDismissed && (
+          <SafetyNote onDismiss={() => setSafetyDismissed(true)} />
+        )}
       </div>
 
       {/* Submit (sticky-ish at bottom of flow) */}
