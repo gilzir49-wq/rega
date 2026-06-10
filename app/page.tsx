@@ -154,7 +154,12 @@ export default function Home() {
       {/* Screens */}
       {screen === 'welcome' && (
         <Welcome
-          onStart={() => setScreen('before')}
+          onStart={() => {
+            // Start every cycle from a clean slate — no leftover emotional
+            // state from a previous session can carry over.
+            reset();
+            setScreen('before');
+          }}
           onQuickCalm={() => setScreen('calm')}
           onResources={() => setScreen('resources')}
           onShare={doShare}
@@ -173,6 +178,7 @@ export default function Home() {
 
       {screen === 'before' && (
         <CheckIn
+          key="checkin-before"
           title="איך אתם מרגישים עכשיו?"
           subtitle="קחו רגע לשים לב. אין תשובה נכונה — רק מה שיש."
           submitLabel="זה מה שיש כרגע"
@@ -190,6 +196,7 @@ export default function Home() {
 
       {screen === 'after' && (
         <CheckIn
+          key="checkin-after"
           title="ואיך אתם מרגישים עכשיו?"
           subtitle="אותה בדיקה עדינה, אחרי שעצרתם לרגע."
           submitLabel="סיימתי"
